@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2023/11/20 22:34:07 by JFikents         ###   ########.fr        #
+#    Updated: 2023/11/21 10:18:36 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ CFLAGS = -Wall -Wextra -Werror
 ADD = -fsanitize=address -g
 OBJ+ = $(C_FILES:.c=.o) $(BONUS_FILES:.c=.o)
 OBJ = $(C_FILES:.c=.o)
-LIBFT_D = libft/
+LIBS_D = libft/
 DEBUGGER = debugger/
 
 NAME = 
@@ -35,16 +35,30 @@ all: $(NAME)
 bonus: $(OBJ+)
 	@$(LIB) $(NAME) $(OBJ+)
 
-$(NAME) : $(OBJ)
+$(NAME) : $(OBJ) a_files
+	@echo "	Compiling $(NAME)..."
 	@$(LIB) $(NAME) $(OBJ)
+	@clean
+
+a_files: $(LIBS_D)
+	@for dir in $(LIBS_D); do \
+		echo "	Compiling $$dir..."; \
+		$(CALLMAKE) $$dir; \
+	done
 
 %.o : %.c 
+	@echo "Compiling $@..."
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
+	@echo "	Cleanig traces..."
+	@echo "	Ereasing Files .o"
 	@$(RM) $(OBJ+)
+	@echo "	Ereasing Files .a"
+	@$(RM) *.a
 
 fclean: clean
+	@echo "	Ereasing $(NAME)..."
 	@$(RM) $(NAME)
 
 re: fclean all
