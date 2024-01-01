@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/01 21:06:52 by JFikents         ###   ########.fr        #
+#    Updated: 2024/01/01 21:07:14 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -136,7 +136,7 @@ git_clean : fclean
 	@$(RM) $(MLX42)
 	@git add .
 	@echo "	Added all files"
-	@echo -n "	Commit message:"
+	@echo "	Commit message:"
 	@read msg; \
 		echo "	Commiting..."; \
 		git commit -m "$$msg"
