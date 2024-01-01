@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:51:44 by JFikents          #+#    #+#             */
-/*   Updated: 2023/12/18 23:01:31 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/01 21:39:08 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,26 @@ void	ft_place_holder(void);
 /*
 // ?? ------------------------ ALLOWED FUNCTIONS ------------------------ ?? //
 
+?	open(char *file path, int flags, (OPT) permissions)
+		Opens a file and returns a file descriptor.
+?	close(int file descriptor)
+		Closes a file descriptor.
+?	read(int file descriptor, void *buffer, int number of bytes)
+		Reads a file descriptor n bytes, and stores it in the buffer.
+?	write(int file descriptor, void *buffer, int number of bytes)
+		Writes a file descriptor n bytes from the buffer.
+?	malloc(int number of bytes)
+		Allocates n bytes of memory and returns a pointer to it.
+?	free(void *pointer)
+		Frees the memory allocated by malloc.
+?	perror(char *msg)
+		Prints the error message to stderr.
+?	strerror(int error number)
+		Returns the error message as a string.
+?	exit(int status)
+		Exits the program with the given status.
+? All functions of the math
+? All functions of the MiniLibX
 
 //_--------------------------------------------------------------------------_//
 */
