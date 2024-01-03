@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
+#    By: JFikents <JFikents@student.42heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/01 21:07:14 by JFikents         ###   ########.fr        #
+#    Updated: 2024/01/02 21:33:41 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ $(addprefix -l, $(subst lib,,$(subst /,,$(LIBRARIES_DIR))))
 
 # ? -------------------------- DO YOU HAVE BONUS? -------------------------- ? #
 # If you have bonus, change the value of the variable BONUS to 1 and add the
-# bonus files to the variable BONUS_FILES
+#  bonus files to the variable BONUS_FILES
 BONUS = 1
 BONUS_FILES = 
 # If it compiles together with the rest of the files, change the value of the
