@@ -4,3 +4,6 @@
 [submodule "MLX42"]
 	path = MLX42
 	url = git@github.com:codam-coding-college/MLX42.git
+[submodule "libf"]
+	path = libf
+	url = git@github.com:JorFik/libft.git
