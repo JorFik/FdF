@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: JFikents <JFikents@student.42heilbronn.de> +#+  +:+       +#+         #
+#    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/02 21:33:41 by JFikents         ###   ########.fr        #
+#    Updated: 2024/01/04 00:21:01 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -180,13 +180,11 @@ ifeq ($(COMPILE_TOGETHER), 1)
 bonus: a_files $(OBJ+) $(OBJ)
 	@echo "	Compiling $(NAME) with bonus..."
 	@$(CC) -o $(NAME) $(OBJ+) $(OBJ) $(CFLAGS) $(ADD)
-	@make clean
 endif
 else
 bonus: a_files $(OBJ+)
 	@echo "	Compiling $(NAME)_bonus..."
 	@$(CC) -o $(NAME)_bonus $(OBJ+) $(CFLAGS) $(ADD)
-	@make clean
 endif
 
 #_----------------------------------------------------------------------------_#
