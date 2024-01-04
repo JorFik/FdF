@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/04 01:42:14 by JFikents         ###   ########.fr        #
+#    Updated: 2024/01/04 01:43:57 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -128,14 +128,8 @@ libmlx42:
 	@echo "	Creating libmlx42..."
 	@cmake MLX42/ -B libmlx42 && cmake --build libmlx42 --parallel -j4
 
-git_clean : fclean
+git : fclean
 	@echo "	Preparring to save to git repository..."
-	@echo "	Removing $(LIBRARIES_DIR)..."
-	@git submodule deinit -f libft
-	@$(RM) $(LIBRARIES_DIR)
-	@echo "	Removing $(MLX42)..."
-	@git submodule deinit -f $(MLX42)
-	@$(RM) $(MLX42)
 	@git add .
 	@echo "	Added all files"
 	@echo "	Commit message:"
