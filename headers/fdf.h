@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:51:44 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/01 21:39:08 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/04 00:40:48 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,11 @@
 
 // ** ---------------------------- LIBRARIES ---------------------------- ** //
 
-# include "libft.h"
 # include <math.h> // for sin, cos, tan, sqrt etc.
 # include <stdio.h> // for perror
 # include <string.h> // for strerror
+# include "libft.h"
+# include "MLX42.h"
 
 //_--------------------------------------------------------------------------_//
 
