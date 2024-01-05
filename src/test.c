@@ -6,19 +6,10 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:50:19 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/04 04:37:44 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/05 18:21:25 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "fdf.h"
-
-// int	main(int argc, char **argv)
-// {
-// 	void	*mlx;
-
-// 	mlx = mlx_init();
-// 	return (0);
-// }
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
