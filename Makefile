@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/04 01:43:57 by JFikents         ###   ########.fr        #
+#    Updated: 2024/01/05 18:18:45 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,11 +18,12 @@ CALLMAKE = make -C
 OBJ = $(addprefix $(SRC_DIR), $(C_FILES:.c=.o))
 OBJ+ = $(addprefix $(SRC_DIR), $(BONUS_FILES:.c=.o))
 SRC = $(addprefix $(SRC_DIR), $(C_FILES))
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address\
+CFLAGS = -Wall -Wextra  -fsanitize=address\
 $(addprefix -I, $(H_FILES_DIR))
 ADD = -fsanitize=address -g \
 $(addprefix -L, $(LIBRARIES_DIR))\
 $(addprefix -l, $(subst lib,,$(subst /,,$(LIBRARIES_DIR))))
+default_target: all
 #_----------------------------------------------------------------------------_#
 
 # ? -------------------------- DO YOU HAVE BONUS? -------------------------- ? #
@@ -45,7 +46,7 @@ PROGRAM = 1
 # * --------------------------- CHANGE THIS AREA --------------------------- * #
 NAME = fdf
 # CFLAGS += -framework Cocoa -framework OpenGL -framework IOKit
-ADD += -lglfw -L"/Users/$(USER)/.brew/opt/glfw/lib/"
+ADD += -lglfw -L"/Users/$(USER)/.brew/opt/glfw/lib/" -ldl
 H_FILES_DIR = headers/ libft/h_files/\
 	$(addprefix $(MLX42), $(addprefix include/, $(MLX42_H)))
 LIBRARIES_DIR = libft/ libmlx42/
@@ -55,9 +56,57 @@ SRC_DIR = src/
 C_FILES = main.c
 #_----------------------------------------------------------------------------_#
 
+# * ----------------------------- DEBUG AREA ------------------------------ * #
+
+# To debug your program, just call the rule debug
+# It will compile your program with the flag -g and move the executable to the
+# folder DEBUGGER
+DEBUGGER = debugger/
+
+# If you want to test your program, but just some files, add them to the
+# variable TEST and use the rule test
+TEST = src/test.c
+
+c: fclean
+	@$(RM) $(DEBUGGER)* 
+	@$(RM) *.out *.dSYM *.gch 
+
+debug: c a_files
+	@$(CC) $(CFLAGS) $(SRC) $(ADD)
+	@mv a.out $(DEBUGGER)
+	@make fclean
+
+test: c a_files
+	@$(CC) $(CFLAGS) $(TEST) $(ADD)
+	@mv a.out $(DEBUGGER)
+	@make fclean
+
+#_----------------------------------------------------------------------------_#
+
+# * ----------------------------- EXTRA RULES ----------------------------- * #
+
+# Here you can add extra rules to compile your program
+
+libmlx42/:
+	@echo "	Creating libmlx42..."
+	@cmake MLX42/ -B libmlx42 && cmake --build libmlx42 --parallel -j4
+
+git : fclean
+	@echo "	Preparring to save to git repository..."
+	@$(RM) libmlx42/
+	@git add .
+	@echo "	Added all files"
+	@echo "	Commit message:"
+	@read msg; \
+		echo "	Commiting..."; \
+		git commit -m "$$msg"
+	@git push
+
+#_----------------------------------------------------------------------------_#
+
 # * ----------------------------- BASIC RULES ----------------------------- * #
 
-.PHONY: clean fclean re all c bonus debug test a_files submodule aclean
+.PHONY: clean fclean re all c bonus debug test a_files submodule aclean 
 
 ifeq ($(BONUS), 1)
 ifeq ($(COMPILE_TOGETHER), 1)
@@ -111,61 +160,12 @@ submodule:
 a_files: submodule $(LIBRARIES_DIR)
 	@for dir in $(LIBRARIES_DIR); do \
 		echo "	Compiling $$dir..."; \
-		$(CALLMAKE) $$dir; \
+		$(CALLMAKE) $$dir -s; \
 	done
 
 %.o : %.c
 	@echo "	Compiling $@..."
 	@$(CC) $(CFLAGS) -c -o $@ $<
-
-#_----------------------------------------------------------------------------_#
-
-# * ----------------------------- EXTRA RULES ----------------------------- * #
-
-# Here you can add extra rules to compile your program
-
-libmlx42:
-	@echo "	Creating libmlx42..."
-	@cmake MLX42/ -B libmlx42 && cmake --build libmlx42 --parallel -j4
-
-git : fclean
-	@echo "	Preparring to save to git repository..."
-	@git add .
-	@echo "	Added all files"
-	@echo "	Commit message:"
-	@read msg; \
-		echo "	Commiting..."; \
-		git commit -m "$$msg"
-	@git push
-
-#_----------------------------------------------------------------------------_#
-
-# * ----------------------------- DEBUG AREA ------------------------------ * #
-
-# To debug your program, just call the rule debug
-# It will compile your program with the flag -g and move the executable to the
-# folder DEBUGGER
-DEBUGGER = debugger/
-
-# If you want to test your program, but just some files, add them to the
-# variable TEST and use the rule test
-TEST =
-
-c: fclean
-	@$(RM) $(DEBUGGER)* 
-	@$(RM) *.out *.dSYM *.gch 
-
-debug: c a_files
-	@$(CC) $(CFLAGS) $(SRC) $(ADD)
-	@mv a.out.dSYM $(DEBUGGER)
-	@mv a.out $(DEBUGGER)
-	@make fclean
-
-test: c
-	@$(CC) $(CFLAGS) $(TEST) $(ADD)
-	@mv a.out.dSYM $(DEBUGGER)
-	@mv a.out $(DEBUGGER)
-	@make fclean
 
 #_----------------------------------------------------------------------------_#
 
