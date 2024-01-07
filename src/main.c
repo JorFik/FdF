@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/01 21:18:05 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/07 23:39:40 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/07 23:49:30 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,31 +23,21 @@ void	key_press(void *param)
 
 void	key_hook(mlx_key_data_t keydata, void *param)
 {
-	static int	x = 0;
-	static int	y = 0;
+	mlx_image_t	*mario;
 
-	if (keydata.key == MLX_KEY_W && keydata.action == MLX_REPEAT && y > 0)
-	{
-		mlx_put_pixel(param, x, --y, 0x0000FFFF);
-		mlx_put_pixel(param, x, y + 1, 0x808000FF);
-	}
+	mario = (mlx_image_t *)param;
+	if (keydata.key == MLX_KEY_W && keydata.action == MLX_REPEAT
+		&& mario->instances->y > 0)
+		mario->instances->y -= 1;
 	else if (keydata.key == MLX_KEY_S && keydata.action == MLX_REPEAT
-		&& y < HEIGHT - 1)
-	{
-		mlx_put_pixel(param, x, ++y, 0x0000FFFF);
-		mlx_put_pixel(param, x, y - 1, 0x808000FF);
-	}
-	if (keydata.key == MLX_KEY_A && keydata.action == MLX_REPEAT && x > 0)
-	{
-		mlx_put_pixel(param, --x, y, 0x0000FFFF);
-		mlx_put_pixel(param, x + 1, y, 0x808000FF);
-	}
+		&& mario->instances->y < HEIGHT - (int) mario->height)
+		mario->instances->y += 1;
+	if (keydata.key == MLX_KEY_A && keydata.action == MLX_REPEAT
+		&& mario->instances->x > 0)
+		mario->instances->x -= 1;
 	else if (keydata.key == MLX_KEY_D && keydata.action == MLX_REPEAT
-		&& x < WIDTH - 1)
-	{
-		mlx_put_pixel(param, ++x, y, 0x0000FFFF);
-		mlx_put_pixel(param, x - 1, y, 0x808000FF);
-	}
+		&& mario->instances->x < WIDTH - (int) mario->width)
+		mario->instances->x += 1;
 }
 
 void	background_hook(void *param)
@@ -113,7 +103,7 @@ int	main(int argc, char **argv)
 	exit_on_error(mlx_image_to_window(fdf, image, 0, 0), NULL, NULL, fdf);
 	mario = mario_bros(fdf);
 	mlx_scroll_hook(fdf, scroll_hook, image);
-	mlx_key_hook(fdf, key_hook, image);
+	mlx_key_hook(fdf, key_hook, mario);
 	mlx_loop_hook(fdf, key_press, (void *)fdf);
 	mlx_loop_hook(fdf, background_hook, (void *)image);
 	mlx_loop(fdf);
