@@ -9,7 +9,7 @@
 			"type": "lldb",
 			"request": "launch",
 			"program": "${workspaceFolder}/debugger/a.out",
-			"args": [],
+			"args": ["a"],
 			"cwd": "${workspaceFolder}",
 			"breakpointMode": "file",
 		}

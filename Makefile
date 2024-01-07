@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/05 18:18:45 by JFikents         ###   ########.fr        #
+#    Updated: 2024/01/07 21:15:28 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,11 +18,11 @@ CALLMAKE = make -C
 OBJ = $(addprefix $(SRC_DIR), $(C_FILES:.c=.o))
 OBJ+ = $(addprefix $(SRC_DIR), $(BONUS_FILES:.c=.o))
 SRC = $(addprefix $(SRC_DIR), $(C_FILES))
-CFLAGS = -Wall -Wextra  -fsanitize=address\
-$(addprefix -I, $(H_FILES_DIR))
-ADD = -fsanitize=address -g \
-$(addprefix -L, $(LIBRARIES_DIR))\
-$(addprefix -l, $(subst lib,,$(subst /,,$(LIBRARIES_DIR))))
+CFLAGS = -Wall -Wextra -Werror -Wunreachable-code
+HEADERS = $(addprefix -I, $(HEADERS_DIR))
+DEBUG_FLAGS = -fsanitize=address -g
+LIBRARIES = $(patsubst %, -L%/, $(LIBRARIES_DIR))\
+$(patsubst lib%,-l%,$(LIBRARIES_DIR))
 default_target: all
 #_----------------------------------------------------------------------------_#
 
@@ -44,16 +44,45 @@ PROGRAM = 1
 #_----------------------------------------------------------------------------_#
 
 # * --------------------------- CHANGE THIS AREA --------------------------- * #
+# NAME is the name of the executable or library
 NAME = fdf
-# CFLAGS += -framework Cocoa -framework OpenGL -framework IOKit
-ADD += -lglfw -L"/Users/$(USER)/.brew/opt/glfw/lib/" -ldl
-H_FILES_DIR = headers/ libft/h_files/\
+
+# If you need to add more flags to the compilation, add them here in CFLAGS
+# -Wall -Wextra -Werror -Wunreachable-code are already added
+CFLAGS += -Ofast
+
+# If you need to add libraries, add them to the variable LIBRARIES_DIR
+#_ Don't add '/' at the end of the directory
+LIBRARIES_DIR = libft libmlx42
+
+# If your libraries are created in a different directory or with a 
+# different name, add the appropriate flags to the variable LIBRARIES
+# Example of flags that need to be added:
+# LIBRARIES += -lglfw
+# The Automatically added flags are created with the following pattern:
+# -l$(LIBRARY_DIR - "lib" at the beginning) -L$(LIBRARY_DIR + "/" at the end)
+# (e.g. libft -> -lft -Llibft/)
+LIBRARIES += -lglfw -L"/Users/$(USER)/.brew/opt/glfw/lib/" -ldl
+
+# Here you can add the headers that you need to compile your program
+# The headers are added with the flag -I
+HEADERS_DIR = headers/ libft/h_files/\
 	$(addprefix $(MLX42), $(addprefix include/, $(MLX42_H)))
-LIBRARIES_DIR = libft/ libmlx42/
+
+# Here you can add the subdirectory where your source files are
+SRC_DIR = src/
+
+# Here you can add the files that you need to compile your program
+#_ NOTE: to every file in C_FILES, the path in SRC_DIR will be added at the
+#_ beginning
+C_FILES = main.c error_handle.c rgba_utils.c sprite.c
+
+# Here you can add the files that you need to compile that are not inside the
+# SRC_DIR
+SRC +=
+
 MLX42 = MLX42/
 MLX42_H = MLX42/ lodepng/ KHR/ glad/
-SRC_DIR = src/
-C_FILES = main.c
 #_----------------------------------------------------------------------------_#
 
 # * ----------------------------- DEBUG AREA ------------------------------ * #
@@ -67,18 +96,25 @@ DEBUGGER = debugger/
 # variable TEST and use the rule test
 TEST = src/test.c
 
-c: fclean
+# If you want to add more flags to the debug rule, add them to the variable
+# DEBUG_FLAGS
+# -g and -fsanitize=address are already added
+DEBUG_FLAGS +=
+
+c:
 	@$(RM) $(DEBUGGER)* 
 	@$(RM) *.out *.dSYM *.gch 
 
 debug: c a_files
-	@$(CC) $(CFLAGS) $(SRC) $(ADD)
+	@$(CC) $(CFLAGS) $(SRC) $(DEBUG_FLAGS) $(HEADERS) $(LIBRARIES)
+	@mv a.out.dSYM $(DEBUGGER)
 	@mv a.out $(DEBUGGER)
-	@make fclean
+# @make fclean
 
 test: c a_files
-	@$(CC) $(CFLAGS) $(TEST) $(ADD)
+	@$(CC) $(CFLAGS) $(TEST) $(DEBUG_FLAGS) $(HEADERS) $(LIBRARIES)
 	@mv a.out $(DEBUGGER)
+	@mv a.out.dSYM $(DEBUGGER)
 	@make fclean
 
 #_----------------------------------------------------------------------------_#
@@ -89,7 +125,7 @@ test: c a_files
 
 libmlx42/:
 	@echo "	Creating libmlx42..."
-	@cmake MLX42/ -B libmlx42 && cmake --build libmlx42 --parallel -j4
+	@cmake $(MLX42) -B libmlx42 && cmake --build libmlx42 --parallel -j4
 
 git : fclean
 	@echo "	Preparring to save to git repository..."
@@ -121,11 +157,11 @@ endif
 ifeq ($(PROGRAM), 1)
 $(NAME) : a_files $(OBJ)
 	@echo "	Compiling $@..."
-	@$(CC) -o $@ $(OBJ) $(CFLAGS) $(ADD)
+	@$(CC) -o $@ $(OBJ) $(CFLAGS) $(HEADERS) $(LIBRARIES)
 else
 $(NAME) : a_files $(OBJ)
 	@echo "	Compiling $(NAME)..."
-	@$(LIB) $(NAME) $(OBJ) $(ADD)
+	@$(LIB) $(NAME) $(OBJ) $(HEADERS) $(LIBRARIES)
 endif
 
 clean: aclean
@@ -165,7 +201,12 @@ a_files: submodule $(LIBRARIES_DIR)
 
 %.o : %.c
 	@echo "	Compiling $@..."
-	@$(CC) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) -c -o $@ $< $(HEADERS)
+
+run : all
+	@echo "	arg?"
+	@read arg; \
+		./$(NAME) $$arg
 
 #_----------------------------------------------------------------------------_#
 
@@ -175,12 +216,12 @@ ifeq ($(BONUS), 1)
 ifeq ($(COMPILE_TOGETHER), 1)
 bonus: a_files $(OBJ+) $(OBJ)
 	@echo "	Compiling $(NAME) with bonus..."
-	@$(CC) -o $(NAME) $(OBJ+) $(OBJ) $(CFLAGS) $(ADD)
+	@$(CC) -o $(NAME) $(OBJ+) $(OBJ) $(CFLAGS) $(HEADERS) $(LIBRARIES)
 endif
 else
 bonus: a_files $(OBJ+)
 	@echo "	Compiling $(NAME)_bonus..."
-	@$(CC) -o $(NAME)_bonus $(OBJ+) $(CFLAGS) $(ADD)
+	@$(CC) -o $(NAME)_bonus $(OBJ+) $(CFLAGS) $(HEADERS) $(LIBRARIES)
 endif
 
 #_----------------------------------------------------------------------------_#

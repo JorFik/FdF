@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:51:44 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/04 00:40:48 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/07 23:35:43 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,16 @@
 
 // ** ------------------------------ MACROS ------------------------------ ** //
 
-# ifndef TEMPLATE_MACRO
-#  define TEMPLATE_MACRO	42
+# ifndef CHECK_NULL
+#  define CHECK_NULL	-5102
+# endif
+
+# ifndef WIDTH
+#  define WIDTH	128
+# endif
+
+# ifndef HEIGHT
+#  define HEIGHT	72
 # endif
 
 //_--------------------------------------------------------------------------_//
@@ -42,23 +50,93 @@ typedef struct s_linked_list_template
 //_--------------------------------------------------------------------------_//
 
 // ** ---------------------------- FUNCTIONS ---------------------------- ** //
+mlx_image_t	*mario_bros(mlx_t *window);
 
 /**
 	@note//_DESCRIPTION
 	@brief ####
-	@brief
+	@brief 
 	@note//_PARAMETERS
-	@param
-	@note//_RETURN
-	@return
+	@param 
 	@note//_NOTES
-	@note
-	@note//_SEE_ALSO
-	@see
-	@note//_WARNINGS
-	@warning
+	@note 
+	@note//_RETURN_VALUE
+	@return 
  */
-void	ft_place_holder(void);
+int			get_r(int rgba);
+
+/**
+	@note//_DESCRIPTION
+	@brief ####
+	@brief 
+	@note//_PARAMETERS
+	@param 
+	@note//_NOTES
+	@note 
+	@note//_RETURN_VALUE
+	@return 
+ */
+int			get_g(int rgba);
+
+/**
+	@note//_DESCRIPTION
+	@brief ####
+	@brief 
+	@note//_PARAMETERS
+	@param 
+	@note//_NOTES
+	@note 
+	@note//_RETURN_VALUE
+	@return 
+ */
+int			get_b(int rgba);
+
+/**
+	@note//_DESCRIPTION
+	@brief ####
+	@brief 
+	@note//_PARAMETERS
+	@param 
+	@note//_NOTES
+	@note 
+	@note//_RETURN_VALUE
+	@return 
+ */
+int			get_a(int rgba);
+
+/**
+	@note//_DESCRIPTION
+	@brief ####
+	@brief 
+	@note//_PARAMETERS
+	@param 
+	@note//_NOTES
+	@note 
+	@note//_RETURN_VALUE
+	@return 
+ */
+int			get_rgba(int r, int g, int b, int a);
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Checks for errors and exits the program if an error occurs.
+	@brief Checks if `status` is -1, or if `status` is `CHECK_NULL` then checks
+	if `check_4_null` is `NULL`. If either is true, then it prints the custom 
+	error message or the one from the mlx library to stderr and exits the
+	program with the error code.
+	@note//_PARAMETERS
+	@param status The int to check for -1.
+	@param check_4_null The pointer to check for NULL.
+	@param error_message The custom error message to print to stderr if needed.
+	@param fdf The mlx_t struct to terminate if needed.
+	@note//_NOTES
+	@note If `status` is different from -1 or `CHECK_NULL` then it does 
+	nothing.
+	@note If `error_message` is `NULL` then it prints the error message from
+	the mlx library.
+ */
+void		exit_on_error(int status, void *check_4_null, char *error_message,
+			mlx_t *fdf);
 
 //_--------------------------------------------------------------------------_//
 
