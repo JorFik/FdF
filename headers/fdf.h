@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:51:44 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/07 23:35:43 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/09 21:55:30 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@
 # endif
 
 # ifndef WIDTH
-#  define WIDTH	128
+#  define WIDTH	1280
 # endif
 
 # ifndef HEIGHT
-#  define HEIGHT	72
+#  define HEIGHT	720
 # endif
 
 //_--------------------------------------------------------------------------_//
@@ -50,70 +50,104 @@ typedef struct s_linked_list_template
 //_--------------------------------------------------------------------------_//
 
 // ** ---------------------------- FUNCTIONS ---------------------------- ** //
+mlx_image_t	*draw_star(mlx_t *fdf);
 mlx_image_t	*mario_bros(mlx_t *window);
-
 /**
 	@note//_DESCRIPTION
 	@brief ####
-	@brief 
+	@brief
 	@note//_PARAMETERS
-	@param 
+	@param
 	@note//_NOTES
-	@note 
+	@note
 	@note//_RETURN_VALUE
-	@return 
+	@return
+ */
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Checks if the given `xy` coordinates are valid.
+	@brief Checks if the given `xy` coordinates are inside the given `image`.
+	@note//_PARAMETERS
+	@param xy The coordinates to check.
+	@param image The image to check the coordinates in.
+	@note//_RETURN_VALUE
+	@return `0` if the coordinates are outside of the image, `1` if they are
+		inside.
+ */
+int			is_coord_valid(int *xy, mlx_image_t *image);
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Draws a line in the given `image`
+	@brief Draws a line from coordinates `xy_1` to coordinates `xy_2` with the 
+		given `color` on the given `image`.
+	@note//_PARAMETERS
+	@param image The image to draw the line on.
+	@param xy_1 The coordinates of the first point.
+	@param xy_2 The coordinates of the second point.
+	@param color The color of the line.
+	@note//_NOTES
+	@note If any of the coordinates are outside of the image, then it does 
+		nothing.
+ */
+void		draw_line(mlx_image_t *image, int *xy_1, int *xy_2, int color);
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Decodes from `rgba` the red value.
+	@brief Takes the `rgba` value and takes the `red` value from it.
+	@note//_PARAMETERS
+	@param rgba The rgba value.
+	@note//_RETURN_VALUE
+	@return The red value.
  */
 int			get_r(int rgba);
 
 /**
 	@note//_DESCRIPTION
-	@brief ####
-	@brief 
+	@brief #### Decodes from `rgba` the green value.
+	@brief Takes the `rgba` value and takes the `green` value from it.
 	@note//_PARAMETERS
-	@param 
-	@note//_NOTES
-	@note 
+	@param rgba The rgba value.
 	@note//_RETURN_VALUE
-	@return 
+	@return The green value.
  */
 int			get_g(int rgba);
 
 /**
 	@note//_DESCRIPTION
-	@brief ####
-	@brief 
+	@brief #### Decodes from `rgba` the blue value.
+	@brief Takes the `rgba` value and takes the `blue` value from it.
 	@note//_PARAMETERS
-	@param 
-	@note//_NOTES
-	@note 
+	@param rgba The rgba value.
 	@note//_RETURN_VALUE
-	@return 
+	@return The blue value.
  */
 int			get_b(int rgba);
 
 /**
 	@note//_DESCRIPTION
-	@brief ####
-	@brief 
+	@brief #### Decodes from `rgba` the alpha value.
+	@brief Takes the `rgba` value and takes the `alpha` value from it.
 	@note//_PARAMETERS
-	@param 
-	@note//_NOTES
-	@note 
+	@param rgba The rgba value.
 	@note//_RETURN_VALUE
-	@return 
+	@return The alpha value.
  */
 int			get_a(int rgba);
 
 /**
 	@note//_DESCRIPTION
-	@brief ####
-	@brief 
+	@brief #### Returns the rgba value of the given r, g, b, and a values.
+	@brief Encodes the r, g, b, and a values into a single int.
 	@note//_PARAMETERS
-	@param 
-	@note//_NOTES
-	@note 
+	@param r The red value.
+	@param g The green value.
+	@param b The blue value.
+	@param a The alpha value.
 	@note//_RETURN_VALUE
-	@return 
+	@return Encoded rgba value.
  */
 int			get_rgba(int r, int g, int b, int a);
 
@@ -136,7 +170,7 @@ int			get_rgba(int r, int g, int b, int a);
 	the mlx library.
  */
 void		exit_on_error(int status, void *check_4_null, char *error_message,
-			mlx_t *fdf);
+				mlx_t *fdf);
 
 //_--------------------------------------------------------------------------_//
 

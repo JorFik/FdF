@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/01 21:18:05 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/07 23:49:30 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/09 22:26:05 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,39 @@ void	key_hook(mlx_key_data_t keydata, void *param)
 	else if (keydata.key == MLX_KEY_D && keydata.action == MLX_REPEAT
 		&& mario->instances->x < WIDTH - (int) mario->width)
 		mario->instances->x += 1;
+	if (keydata.key == MLX_KEY_UP && keydata.action == MLX_REPEAT
+		&& mario->instances[1].y > 0)
+		mario->instances[1].y -= 1;
+	else if (keydata.key == MLX_KEY_DOWN && keydata.action == MLX_REPEAT
+		&& mario->instances[1].y < HEIGHT - (int) mario->height)
+		mario->instances[1].y += 1;
+	if (keydata.key == MLX_KEY_LEFT && keydata.action == MLX_REPEAT
+		&& mario->instances[1].x > 0)
+		mario->instances[1].x -= 1;
+	else if (keydata.key == MLX_KEY_RIGHT && keydata.action == MLX_REPEAT
+		&& mario->instances[1].x < WIDTH - (int) mario->width)
+		mario->instances[1].x += 1;
+	if (keydata.key == MLX_KEY_B && keydata.action == MLX_PRESS)
+		mlx_resize_image(mario, mario->width * 2, mario->height * 2);
+	else if (keydata.key == MLX_KEY_N && keydata.action == MLX_PRESS)
+		mlx_resize_image(mario, mario->width / 2, mario->height / 2);
+	if (keydata.key == MLX_KEY_C && keydata.action == MLX_PRESS)
+		ft_printf("%d\n", mario->count);
 }
 
-void	background_hook(void *param)
+void	set_background(mlx_image_t *background)
 {
-	static int	x;
-	static int	y;
-	int			i;
-	int			line_per_iteration;
+	int	x;
+	int	y;
 
-	if (x == WIDTH)
+	y = 0;
+	while (y < HEIGHT)
 	{
 		x = 0;
+		while (x < WIDTH)
+			mlx_put_pixel(background, x++, y, get_rgba(0, 0, 0, 255));
 		y ++;
 	}
-	if (y == HEIGHT + 1)
-		return ;
-	line_per_iteration = 0;
-	i = 0;
-	while (i < WIDTH - 1 && x + i < WIDTH)
-		mlx_put_pixel(param, x + i++, y, 0x808000FF);
-	x += i;
 }
 
 void	scroll_hook(double delta_x, double delta_y, void *param)
@@ -77,7 +89,7 @@ void	scroll_hook(double delta_x, double delta_y, void *param)
 	}
 	while (0 <= delta_y)
 	{
-		if (coordinate_y + 1 > HEIGHT)
+		if (coordinate_y > HEIGHT)
 			coordinate_y = HEIGHT - 1;
 		mlx_put_pixel(param, 50, coordinate_y, 0xFF0000FF);
 		mlx_put_pixel(param, 50, ++coordinate_y, 0xFF0000FF);
@@ -87,9 +99,9 @@ void	scroll_hook(double delta_x, double delta_y, void *param)
 
 int	main(int argc, char **argv)
 {
-	mlx_image_t	*image;
+	mlx_image_t	*background;
 	mlx_t		*fdf;
-	mlx_image_t	*mario;
+	mlx_image_t	*star;
 
 	if (argc != 2)
 		return (ft_printf("Usage: ./fdf <filename>.fdf\n"), 0);
@@ -98,19 +110,22 @@ int	main(int argc, char **argv)
 	fdf = mlx_init(WIDTH, HEIGHT, "MLX42", true);
 	mlx_set_window_title(fdf, "FdF");
 	exit_on_error(CHECK_NULL, (void *)fdf, NULL, fdf);
-	image = mlx_new_image(fdf, WIDTH, HEIGHT);
-	exit_on_error(CHECK_NULL, image, NULL, fdf);
-	exit_on_error(mlx_image_to_window(fdf, image, 0, 0), NULL, NULL, fdf);
-	mario = mario_bros(fdf);
-	mlx_scroll_hook(fdf, scroll_hook, image);
-	mlx_key_hook(fdf, key_hook, mario);
+	background = mlx_new_image(fdf, WIDTH, HEIGHT);
+	exit_on_error(CHECK_NULL, background, NULL, fdf);
+	set_background(background);
+	exit_on_error(mlx_image_to_window(fdf, background, 0, 0), NULL, NULL, fdf);
+	star = draw_star(fdf);
+	mlx_scroll_hook(fdf, scroll_hook, background);
+	mlx_key_hook(fdf, key_hook, star);
 	mlx_loop_hook(fdf, key_press, (void *)fdf);
-	mlx_loop_hook(fdf, background_hook, (void *)image);
 	mlx_loop(fdf);
 	mlx_terminate(fdf);
 	return (0);
 }
+	// mlx_image_t	*mario;
 
+	// mario = mario_bros(fdf);
+	// mlx_key_hook(fdf, key_hook, mario);
 /*
 _	MLX_STRETCH_IMAGE = 0,
 		Should images resize with the window as it's being resized or not. 
