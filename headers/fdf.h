@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:51:44 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/09 21:55:30 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/10 22:07:23 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,9 @@ typedef struct s_linked_list_template
 //_--------------------------------------------------------------------------_//
 
 // ** ---------------------------- FUNCTIONS ---------------------------- ** //
+void		draw_with_function(mlx_image_t *image, float (function)(float),
+				int xy[2][2], int color);
+mlx_image_t	*draw_axis(mlx_t *fdf);
 mlx_image_t	*draw_star(mlx_t *fdf);
 mlx_image_t	*mario_bros(mlx_t *window);
 /**
@@ -66,7 +69,7 @@ mlx_image_t	*mario_bros(mlx_t *window);
 
 /**
 	@note//_DESCRIPTION
-	@brief #### Checks if the given `xy` coordinates are valid.
+	@brief #### Checks if the (x, y) is valid.
 	@brief Checks if the given `xy` coordinates are inside the given `image`.
 	@note//_PARAMETERS
 	@param xy The coordinates to check.
@@ -91,7 +94,7 @@ int			is_coord_valid(int *xy, mlx_image_t *image);
 	@note If any of the coordinates are outside of the image, then it does 
 		nothing.
  */
-void		draw_line(mlx_image_t *image, int *xy_1, int *xy_2, int color);
+void		draw_line(mlx_image_t *image, int xy_1[2], int xy_2[2], int color);
 
 /**
 	@note//_DESCRIPTION

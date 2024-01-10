@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/09 22:34:09 by JFikents         ###   ########.fr        #
+#    Updated: 2024/01/10 23:02:10 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -75,7 +75,7 @@ SRC_DIR = src/
 # Here you can add the files that you need to compile your program
 #_ NOTE: to every file in C_FILES, the path in SRC_DIR will be added at the
 #_ beginning
-C_FILES = main.c error_handle.c rgba_utils.c draw_line.c
+C_FILES = main.c error_handle.c rgba_utils.c draws.c
 
 # Here you can add the files that you need to compile that are not inside the
 # SRC_DIR

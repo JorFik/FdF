@@ -6,11 +6,17 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/01 21:18:05 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/09 22:26:05 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/10 22:45:35 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+float	x_square_root(float x)
+{
+	return (sqrtf(x));
+}
+	// return (x * sin(x / 390));
 
 void	key_press(void *param)
 {
@@ -101,7 +107,7 @@ int	main(int argc, char **argv)
 {
 	mlx_image_t	*background;
 	mlx_t		*fdf;
-	mlx_image_t	*star;
+	mlx_image_t	*axis;
 
 	if (argc != 2)
 		return (ft_printf("Usage: ./fdf <filename>.fdf\n"), 0);
@@ -114,9 +120,11 @@ int	main(int argc, char **argv)
 	exit_on_error(CHECK_NULL, background, NULL, fdf);
 	set_background(background);
 	exit_on_error(mlx_image_to_window(fdf, background, 0, 0), NULL, NULL, fdf);
-	star = draw_star(fdf);
+	axis = draw_axis(fdf);
+	draw_with_function(axis, x_square_root, (int [2][2]){{0, 0},
+	{1225, (int) x_square_root(1225)}}, get_rgba(255, 0, 0, 255));
 	mlx_scroll_hook(fdf, scroll_hook, background);
-	mlx_key_hook(fdf, key_hook, star);
+	mlx_key_hook(fdf, key_hook, axis);
 	mlx_loop_hook(fdf, key_press, (void *)fdf);
 	mlx_loop(fdf);
 	mlx_terminate(fdf);
