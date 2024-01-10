@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draw_line.c                                        :+:      :+:    :+:   */
+/*   draws.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 21:32:27 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/10 23:00:03 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/10 23:30:35 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,8 @@ void	draw_with_function(mlx_image_t *img, float (function)(float),
 	const int	start = 0;
 	const int	final = 1;
 
-	if ((int) ceil(function(xy[final][x])) != xy[final][y]
+	if (((int) ceil(function(xy[final][x])) != xy[final][y]
+		&& (int)function(xy[final][x]) != xy[final][y])
 		|| !is_coord_valid(xy[start], img) || !is_coord_valid(xy[final], img))
 		return ;
 	while (xy[start][x] != xy[final][x] && xy[start][x] <= xy[final][x])
