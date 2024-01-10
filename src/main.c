@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/01 21:18:05 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/10 23:27:59 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/10 23:31:34 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 float	x_square_root(float x)
 {
-	return (sqrtf(1 - (x * x) + (1000 * x)));
+	return (sqrtf(- (x * x) + (1000 * x)));
 }
 	// return (x * sin(x / 390));
 
