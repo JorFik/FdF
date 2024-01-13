@@ -9,7 +9,7 @@
 			"type": "lldb",
 			"request": "launch",
 			"program": "${workspaceFolder}/debugger/a.out",
-			"args": ["a"],
+			"args": ["test_maps/elem-fract.fdf"],
 			"cwd": "${workspaceFolder}",
 			"breakpointMode": "file",
 		}

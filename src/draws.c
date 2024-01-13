@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 21:32:27 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/10 23:30:35 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/13 13:03:41 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,14 +77,14 @@ void	draw_line(mlx_image_t *image, int xy_1[2], int xy_2[2], int color)
 		draw_line(image, xy_2, xy_1, color);
 }
 
-mlx_image_t	*draw_axis(mlx_t *fdf)
+mlx_image_t	*draw_axis(t_map *map)
 {
 	mlx_image_t	*line;
 
-	line = mlx_new_image(fdf, WIDTH, HEIGHT);
-	exit_on_error(CHECK_NULL, line, NULL, fdf);
-	exit_on_error(mlx_image_to_window(fdf, line, (WIDTH - line->width) / 2,
-			(HEIGHT - line->height) / 2), NULL, NULL, fdf);
+	line = mlx_new_image(map->fdf, WIDTH, HEIGHT);
+	exit_on_error(CHECK_NULL, line, NULL, map);
+	exit_on_error(mlx_image_to_window(map->fdf, line, (WIDTH - line->width) / 2,
+			(HEIGHT - line->height) / 2), NULL, NULL, map);
 	draw_line(line, (int []){line->width / 2, line->height - 1},
 		(int []){0, line->width * tan(60)}, 16711935);
 	draw_line(line, (int []){line->width / 2, line->height - 1},

@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/10 23:02:10 by JFikents         ###   ########.fr        #
+#    Updated: 2024/01/13 13:38:10 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,9 +19,9 @@ OBJ = $(addprefix $(SRC_DIR), $(C_FILES:.c=.o))
 OBJ+ = $(addprefix $(SRC_DIR), $(BONUS_FILES:.c=.o))
 SRC = $(addprefix $(SRC_DIR), $(C_FILES))
 CFLAGS = -Wall -Wextra -Werror -Wunreachable-code
-HEADERS = $(addprefix -I, $(HEADERS_DIR))
+INCLUDES = $(addprefix -I, $(HEADERS_DIR))
 DEBUG_FLAGS = -fsanitize=address -g
-LIBRARIES = $(patsubst %, -L%/, $(LIBRARIES_DIR))\
+LDFLAGS = $(patsubst %, -L%/, $(LIBRARIES_DIR))\
 $(patsubst lib%,-l%,$(LIBRARIES_DIR))
 default_target: all
 #_----------------------------------------------------------------------------_#
@@ -56,13 +56,13 @@ CFLAGS += -Ofast
 LIBRARIES_DIR = libft libmlx42
 
 # If your libraries are created in a different directory or with a 
-# different name, add the appropriate flags to the variable LIBRARIES
+# different name, add the appropriate flags to the variable LDFLAGS
 # Example of flags that need to be added:
-# LIBRARIES += -lglfw
+# LDFLAGS += -lglfw
 # The Automatically added flags are created with the following pattern:
 # -l$(LIBRARY_DIR - "lib" at the beginning) -L$(LIBRARY_DIR + "/" at the end)
 # (e.g. libft -> -lft -Llibft/)
-LIBRARIES += -lglfw -L"/Users/$(USER)/.brew/opt/glfw/lib/" -ldl
+LDFLAGS += -lglfw -L"/Users/$(USER)/.brew/opt/glfw/lib/" -ldl
 
 # Here you can add the headers that you need to compile your program
 # The headers are added with the flag -I
@@ -75,7 +75,7 @@ SRC_DIR = src/
 # Here you can add the files that you need to compile your program
 #_ NOTE: to every file in C_FILES, the path in SRC_DIR will be added at the
 #_ beginning
-C_FILES = main.c error_handle.c rgba_utils.c draws.c
+C_FILES = main.c error_handle.c rgba_utils.c draws.c read_map.c
 
 # Here you can add the files that you need to compile that are not inside the
 # SRC_DIR
@@ -94,7 +94,7 @@ DEBUGGER = debugger/
 
 # If you want to test your program, but just some files, add them to the
 # variable TEST and use the rule test
-TEST = src/test.c
+TEST = src/read_map.c src/error_handle.c
 
 # If you want to add more flags to the debug rule, add them to the variable
 # DEBUG_FLAGS
@@ -106,16 +106,15 @@ c:
 	@$(RM) *.out *.dSYM *.gch 
 
 debug: c a_files
-	@$(CC) $(CFLAGS) $(SRC) $(DEBUG_FLAGS) $(HEADERS) $(LIBRARIES)
+	@$(CC) $(CFLAGS) $(SRC) $(DEBUG_FLAGS) $(INCLUDES) $(LDFLAGS)
 	@mv a.out.dSYM $(DEBUGGER)
 	@mv a.out $(DEBUGGER)
 # @make fclean
 
 test: c a_files
-	@$(CC) $(CFLAGS) $(TEST) $(DEBUG_FLAGS) $(HEADERS) $(LIBRARIES)
+	@$(CC) $(CFLAGS) $(TEST) $(DEBUG_FLAGS) $(INCLUDES) $(LDFLAGS)
 	@mv a.out $(DEBUGGER)
 	@mv a.out.dSYM $(DEBUGGER)
-	@make fclean
 
 #_----------------------------------------------------------------------------_#
 
@@ -136,6 +135,14 @@ git : fclean
 	@read msg; \
 		echo "	Commiting..."; \
 		git commit -m "$$msg"
+	@echo "	Tag (leave blank for no tag):"
+	@read tag; \
+		if [ -n "$$tag" ]; then \
+			echo "	Tag message:"; \
+			read tag_msg; \
+			echo "	Tagging..."; \
+			git tag -a $$tag -m "$$tag_msg"; \
+		fi
 	@git push
 
 #_----------------------------------------------------------------------------_#
@@ -157,11 +164,11 @@ endif
 ifeq ($(PROGRAM), 1)
 $(NAME) : a_files $(OBJ)
 	@echo "	Compiling $@..."
-	@$(CC) -o $@ $(OBJ) $(CFLAGS) $(HEADERS) $(LIBRARIES)
+	@$(CC) -o $@ $(OBJ) $(CFLAGS) $(INCLUDES) $(LDFLAGS)
 else
 $(NAME) : a_files $(OBJ)
 	@echo "	Compiling $(NAME)..."
-	@$(LIB) $(NAME) $(OBJ) $(HEADERS) $(LIBRARIES)
+	@$(LIB) $(NAME) $(OBJ) $(INCLUDES) $(LDFLAGS)
 endif
 
 clean: aclean
@@ -201,7 +208,7 @@ a_files: submodule $(LIBRARIES_DIR)
 
 %.o : %.c
 	@echo "	Compiling $@..."
-	@$(CC) $(CFLAGS) -c -o $@ $< $(HEADERS)
+	@$(CC) $(CFLAGS) -c -o $@ $< $(INCLUDES)
 
 run : all
 	@echo "	arg?"
@@ -216,12 +223,12 @@ ifeq ($(BONUS), 1)
 ifeq ($(COMPILE_TOGETHER), 1)
 bonus: a_files $(OBJ+) $(OBJ)
 	@echo "	Compiling $(NAME) with bonus..."
-	@$(CC) -o $(NAME) $(OBJ+) $(OBJ) $(CFLAGS) $(HEADERS) $(LIBRARIES)
+	@$(CC) -o $(NAME) $(OBJ+) $(OBJ) $(CFLAGS) $(INCLUDES) $(LDFLAGS)
 endif
 else
 bonus: a_files $(OBJ+)
 	@echo "	Compiling $(NAME)_bonus..."
-	@$(CC) -o $(NAME)_bonus $(OBJ+) $(CFLAGS) $(HEADERS) $(LIBRARIES)
+	@$(CC) -o $(NAME)_bonus $(OBJ+) $(CFLAGS) $(INCLUDES) $(LDFLAGS)
 endif
 
 #_----------------------------------------------------------------------------_#

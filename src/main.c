@@ -6,18 +6,13 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/01 21:18:05 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/10 23:31:34 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/13 13:22:15 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-float	x_square_root(float x)
-{
-	return (sqrtf(- (x * x) + (1000 * x)));
-}
-	// return (x * sin(x / 390));
-
+//! EREASE system("leaks fdf"); in EXIT_ON_ERROR
 void	key_press(void *param)
 {
 	if (mlx_is_key_down(param, MLX_KEY_ESCAPE))
@@ -27,49 +22,18 @@ void	key_press(void *param)
 	}
 }
 
-void	key_hook(mlx_key_data_t keydata, void *param)
+//! EREASE system("leaks fdf"); in EXIT_ON_ERROR
+mlx_image_t	*set_background(t_map *map)
 {
-	mlx_image_t	*mario;
-
-	mario = (mlx_image_t *)param;
-	if (keydata.key == MLX_KEY_W && keydata.action == MLX_REPEAT
-		&& mario->instances->y > 0)
-		mario->instances->y -= 1;
-	else if (keydata.key == MLX_KEY_S && keydata.action == MLX_REPEAT
-		&& mario->instances->y < HEIGHT - (int) mario->height)
-		mario->instances->y += 1;
-	if (keydata.key == MLX_KEY_A && keydata.action == MLX_REPEAT
-		&& mario->instances->x > 0)
-		mario->instances->x -= 1;
-	else if (keydata.key == MLX_KEY_D && keydata.action == MLX_REPEAT
-		&& mario->instances->x < WIDTH - (int) mario->width)
-		mario->instances->x += 1;
-	if (keydata.key == MLX_KEY_UP && keydata.action == MLX_REPEAT
-		&& mario->instances[1].y > 0)
-		mario->instances[1].y -= 1;
-	else if (keydata.key == MLX_KEY_DOWN && keydata.action == MLX_REPEAT
-		&& mario->instances[1].y < HEIGHT - (int) mario->height)
-		mario->instances[1].y += 1;
-	if (keydata.key == MLX_KEY_LEFT && keydata.action == MLX_REPEAT
-		&& mario->instances[1].x > 0)
-		mario->instances[1].x -= 1;
-	else if (keydata.key == MLX_KEY_RIGHT && keydata.action == MLX_REPEAT
-		&& mario->instances[1].x < WIDTH - (int) mario->width)
-		mario->instances[1].x += 1;
-	if (keydata.key == MLX_KEY_B && keydata.action == MLX_PRESS)
-		mlx_resize_image(mario, mario->width * 2, mario->height * 2);
-	else if (keydata.key == MLX_KEY_N && keydata.action == MLX_PRESS)
-		mlx_resize_image(mario, mario->width / 2, mario->height / 2);
-	if (keydata.key == MLX_KEY_C && keydata.action == MLX_PRESS)
-		ft_printf("%d\n", mario->count);
-}
-
-void	set_background(mlx_image_t *background)
-{
-	int	x;
-	int	y;
+	mlx_image_t	*background;
+	int			x;
+	int			y;
 
 	y = 0;
+	background = mlx_new_image(map->fdf, WIDTH, HEIGHT);
+	exit_on_error(CHECK_NULL, background, NULL, map);
+	exit_on_error(mlx_image_to_window(map->fdf, background, 0, 0), NULL, NULL,
+		map);
 	while (y < HEIGHT)
 	{
 		x = 0;
@@ -77,59 +41,50 @@ void	set_background(mlx_image_t *background)
 			mlx_put_pixel(background, x++, y, get_rgba(0, 0, 0, 255));
 		y ++;
 	}
+	return (background);
 }
 
-void	scroll_hook(double delta_x, double delta_y, void *param)
+//! EREASE system("leaks fdf"); in EXIT_ON_ERROR
+t_map	*map_initializer(void)
 {
-	static int	coordinate_y = 0;
+	t_map	*map;
 
-	delta_x = 50;
-	while (0 >= delta_y)
-	{
-		if (coordinate_y - 1 < 0)
-			coordinate_y = 1;
-		mlx_put_pixel(param, 50, coordinate_y, 0x000000FF);
-		mlx_put_pixel(param, 50, --coordinate_y, 0x000000FF);
-		delta_y ++;
-		return ;
-	}
-	while (0 <= delta_y)
-	{
-		if (coordinate_y > HEIGHT)
-			coordinate_y = HEIGHT - 1;
-		mlx_put_pixel(param, 50, coordinate_y, 0xFF0000FF);
-		mlx_put_pixel(param, 50, ++coordinate_y, 0xFF0000FF);
-		delta_y --;
-	}
+	map = (t_map *)ft_calloc(1, sizeof(t_map));
+	exit_on_error(CHECK_NULL, (void *)map, "Error allocating t_map", map);
+	map->z_value = NULL;
+	map->colors = NULL;
+	map->width = 0;
+	map->height = 0;
+	map->fdf = NULL;
+	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
+	map->fdf = mlx_init(WIDTH, HEIGHT, "FdF", true);
+	exit_on_error(CHECK_NULL, (void *)map->fdf, NULL, map);
+	return (map);
 }
 
+//! EREASE system("leaks fdf"); in EXIT_ON_ERROR
 int	main(int argc, char **argv)
 {
 	mlx_image_t	*background;
-	mlx_t		*fdf;
 	mlx_image_t	*axis;
+	t_map		*map;
 
 	if (argc != 2)
 		return (ft_printf("Usage: ./fdf <filename>.fdf\n"), 0);
-	argv[0] = NULL;
-	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
-	fdf = mlx_init(WIDTH, HEIGHT, "MLX42", true);
-	mlx_set_window_title(fdf, "FdF");
-	exit_on_error(CHECK_NULL, (void *)fdf, NULL, fdf);
-	background = mlx_new_image(fdf, WIDTH, HEIGHT);
-	exit_on_error(CHECK_NULL, background, NULL, fdf);
-	set_background(background);
-	exit_on_error(mlx_image_to_window(fdf, background, 0, 0), NULL, NULL, fdf);
-	axis = draw_axis(fdf);
-	draw_with_function(axis, x_square_root, (int [2][2]){{0, 1},
-	{1000, (int) x_square_root(1000)}}, get_rgba(255, 0, 0, 255));
-	mlx_scroll_hook(fdf, scroll_hook, background);
-	mlx_key_hook(fdf, key_hook, axis);
-	mlx_loop_hook(fdf, key_press, (void *)fdf);
-	mlx_loop(fdf);
-	mlx_terminate(fdf);
+	map = map_initializer();
+	read_map(argv[1], map);
+	background = set_background(map);
+	axis = draw_axis(map);
+	mlx_loop_hook(map->fdf, key_press, (void *)map->fdf);
+	mlx_loop(map->fdf);
+	mlx_terminate(map->fdf);
 	return (0);
 }
+//! EREASE system("leaks fdf"); in EXIT_ON_ERROR
+	// draw_with_function(axis, x_square_root, (int [2][2]){{0, 1},
+	// {1000, (int) x_square_root(1000)}}, get_rgba(255, 0, 0, 255));
+	// mlx_scroll_hook(fdf, scroll_hook, background);
+	// mlx_key_hook(fdf, key_hook, axis);
 	// mlx_image_t	*mario;
 
 	// mario = mario_bros(fdf);

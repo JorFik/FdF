@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:51:44 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/10 22:07:23 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/12 22:35:43 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,35 +26,51 @@
 // ** ------------------------------ MACROS ------------------------------ ** //
 
 # ifndef CHECK_NULL
-#  define CHECK_NULL	-5102
+#  define CHECK_NULL -5102
 # endif
 
 # ifndef WIDTH
-#  define WIDTH	1280
+#  define WIDTH 1280
 # endif
 
 # ifndef HEIGHT
-#  define HEIGHT	720
+#  define HEIGHT 720
 # endif
 
 //_--------------------------------------------------------------------------_//
 
 // ** ------------------------- DATA STRUCTURES -------------------------- ** //
 
-typedef struct s_linked_list_template
+/**
+	@note//_DESCRIPTION
+	@brief #### The map struct.
+	@brief The map struct contains the width and height of the map, and the
+		map itself with the colors of the map.
+	@note//_PARAMETERS
+	@param width The width of the map.
+	@param height The height of the map.
+	@param z_value The Z value of every point in the map as a `int **`.
+	@param colors The color of every point in the map as a `int **`.
+	@param fdf The `mlx` window, used just in case of an error, to terminate
+		the window.
+	@note//_NOTES
+	@note  `z_value[x][y]` and `colors[x][y]` correspond to the same point.
+	@note//_WARNING
+	@warning `z_value` and `colors` are allocated, make sure to free them.
+ */
+typedef struct s_map
 {
-	void							*content;
-	struct s_linked_list_template	*next;
-}	t_linked_list_template;
+	int		width;
+	int		height;
+	int		**z_value;
+	int		**colors;
+	mlx_t	*fdf;
+}	t_map;
 
 //_--------------------------------------------------------------------------_//
 
 // ** ---------------------------- FUNCTIONS ---------------------------- ** //
-void		draw_with_function(mlx_image_t *image, float (function)(float),
-				int xy[2][2], int color);
-mlx_image_t	*draw_axis(mlx_t *fdf);
-mlx_image_t	*draw_star(mlx_t *fdf);
-mlx_image_t	*mario_bros(mlx_t *window);
+
 /**
 	@note//_DESCRIPTION
 	@brief ####
@@ -66,6 +82,66 @@ mlx_image_t	*mario_bros(mlx_t *window);
 	@note//_RETURN_VALUE
 	@return
  */
+
+/**
+	@note//_DESCRIPTION
+	@brief ####
+	@brief
+	@note//_PARAMETERS
+	@param
+	@note//_NOTES
+	@note
+	@note//_RETURN_VALUE
+	@return
+ */
+void		free_2d_array(void ***array, int size);
+
+/**
+	@note//_DESCRIPTION
+	@brief ####
+	@brief
+	@note//_PARAMETERS
+	@param
+	@note//_NOTES
+	@note
+	@note//_RETURN_VALUE
+	@return
+ */
+void		read_map(char *filename, t_map *map);
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Draws the given Function.
+	@brief Draws the given `function` on the `image` from the coordinates
+		`xy[0]` to `xy[1]` with the given `color`. 
+	@note//_PARAMETERS
+	@param image The image to draw the function on.
+	@param function The function to draw.
+	@param xy The coordinates to draw the function from and to.
+	@param color The color of the function.
+	@note//_NOTES
+	@note The function must be a function that takes a float and returns a float
+	@note The coordinates must be in the format of `{{x1, y1}, {x2, y2}}`
+	@note The coordinates must be inside the image and the final coordinates
+		must be greater than the initial coordinates.
+	@note The final coordinates must be a point inside the given function, else
+		it won't draw the function.
+ */
+void		draw_with_function(mlx_image_t *image, float (function)(float),
+				int xy[2][2], int color);
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Draws x, y, and z axis.
+	@brief Draws the x, y, and z axis on the given `fdf` window.
+	@note//_PARAMETERS
+	@param map The map struct containing the `fdf` window.
+	@note//_NOTES
+	@note Function is just reference for the maps.
+	@note//_RETURN_VALUE
+	@return The image of the axis.
+ */
+mlx_image_t	*draw_axis(t_map *map);
 
 /**
 	@note//_DESCRIPTION
@@ -162,10 +238,11 @@ int			get_rgba(int r, int g, int b, int a);
 	error message or the one from the mlx library to stderr and exits the
 	program with the error code.
 	@note//_PARAMETERS
-	@param status The int to check for -1.
-	@param check_4_null The pointer to check for NULL.
+	@param status The int to check for -1 or `CHECK_NULL`.
+	@param check_4_null The pointer to check for `NULL` if `status` is set to
+		`CHECK_NULL`.
 	@param error_message The custom error message to print to stderr if needed.
-	@param fdf The mlx_t struct to terminate if needed.
+	@param fdf The `mlx_t struct` to terminate if needed.
 	@note//_NOTES
 	@note If `status` is different from -1 or `CHECK_NULL` then it does 
 	nothing.
@@ -173,7 +250,7 @@ int			get_rgba(int r, int g, int b, int a);
 	the mlx library.
  */
 void		exit_on_error(int status, void *check_4_null, char *error_message,
-				mlx_t *fdf);
+				t_map *map);
 
 //_--------------------------------------------------------------------------_//
 
