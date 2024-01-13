@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/01 21:18:05 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/13 13:22:15 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/13 13:48:52 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ int	main(int argc, char **argv)
 	mlx_image_t	*background;
 	mlx_image_t	*axis;
 	t_map		*map;
+	int			x;
+	int			y;
 
 	if (argc != 2)
 		return (ft_printf("Usage: ./fdf <filename>.fdf\n"), 0);
@@ -77,6 +79,14 @@ int	main(int argc, char **argv)
 	axis = draw_axis(map);
 	mlx_loop_hook(map->fdf, key_press, (void *)map->fdf);
 	mlx_loop(map->fdf);
+	y = -1;
+	while (++y < map->height)
+	{
+		x = -1;
+		while (++x < map->width)
+			ft_printf("%d,%p ", map->z_value[y][x], map->colors[y][x]);
+		ft_printf("\n");
+	}
 	mlx_terminate(map->fdf);
 	return (0);
 }

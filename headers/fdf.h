@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:51:44 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/12 22:35:43 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/13 13:41:51 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@
 	@param fdf The `mlx` window, used just in case of an error, to terminate
 		the window.
 	@note//_NOTES
-	@note  `z_value[x][y]` and `colors[x][y]` correspond to the same point.
+	@note  `z_value[y][x]` and `colors[y][x]` correspond to the same point.
 	@note//_WARNING
 	@warning `z_value` and `colors` are allocated, make sure to free them.
  */
