@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/13 13:38:10 by JFikents         ###   ########.fr        #
+#    Updated: 2024/01/25 14:13:21 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,7 @@ NAME = fdf
 
 # If you need to add more flags to the compilation, add them here in CFLAGS
 # -Wall -Wextra -Werror -Wunreachable-code are already added
-CFLAGS += -Ofast
+# CFLAGS += -Ofast
 
 # If you need to add libraries, add them to the variable LIBRARIES_DIR
 #_ Don't add '/' at the end of the directory
@@ -75,7 +75,8 @@ SRC_DIR = src/
 # Here you can add the files that you need to compile your program
 #_ NOTE: to every file in C_FILES, the path in SRC_DIR will be added at the
 #_ beginning
-C_FILES = main.c error_handle.c rgba_utils.c draws.c read_map.c
+C_FILES = main.c error_handle.c rgba_utils.c draws.c read_map.c debug_utils.c\
+	draw_map.c test.c
 
 # Here you can add the files that you need to compile that are not inside the
 # SRC_DIR
@@ -99,7 +100,7 @@ TEST = src/read_map.c src/error_handle.c
 # If you want to add more flags to the debug rule, add them to the variable
 # DEBUG_FLAGS
 # -g and -fsanitize=address are already added
-DEBUG_FLAGS +=
+DEBUG_FLAGS += 
 
 c:
 	@$(RM) $(DEBUGGER)* 

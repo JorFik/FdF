@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:51:44 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/13 13:41:51 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/25 17:03:56 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@
 	@param colors The color of every point in the map as a `int **`.
 	@param fdf The `mlx` window, used just in case of an error, to terminate
 		the window.
+	@param grid The image containing the grid.
+	@param drawn_map The image containing the drawn map.
 	@note//_NOTES
 	@note  `z_value[y][x]` and `colors[y][x]` correspond to the same point.
 	@note//_WARNING
@@ -60,16 +62,25 @@
  */
 typedef struct s_map
 {
-	int		width;
-	int		height;
-	int		**z_value;
-	int		**colors;
-	mlx_t	*fdf;
+	uint32_t	width;
+	uint32_t	height;
+	void		*param;
+	int			**z_value;
+	int			**colors;
+	mlx_t		*fdf;
+	mlx_image_t	*grid;
+	mlx_image_t	*drawn_map;
 }	t_map;
 
 //_--------------------------------------------------------------------------_//
 
 // ** ---------------------------- FUNCTIONS ---------------------------- ** //
+void		put_pixel(mlx_image_t *image, int x, int y, int color);
+void		draw_straight(mlx_image_t *image, int *origin, int *final,
+				int color[2]);
+void		put_line(mlx_image_t *image, int start[2], int end[2],
+				int color[2]);
+void		plot_map(t_map *map);
 
 /**
 	@note//_DESCRIPTION
@@ -85,50 +96,82 @@ typedef struct s_map
 
 /**
 	@note//_DESCRIPTION
-	@brief ####
-	@brief
+	@brief #### Handles the key press to alterate the grid.
+	@brief Key hook function that enables the user to toggle the grid, and 
+		change inclination of the grid.
 	@note//_PARAMETERS
-	@param
+	@param keydata The key data containing the key and the action used by the
+		mlx library.
+	@param param The `t_map struct` containing all the relevant info to handle
+		the grid.
 	@note//_NOTES
-	@note
+	@note The grid is enabled by default.
+	@note The grid is toggle by pressing the 'P' key.
+	@note The grid inclination is increased by pressing the 'Z' key.
+	@note The grid inclination is decreased by pressing the 'X' key.
 	@note//_RETURN_VALUE
 	@return
  */
-void		free_2d_array(void ***array, int size);
+void		handle_grid(mlx_key_data_t keydata, void *param);
 
 /**
 	@note//_DESCRIPTION
-	@brief ####
-	@brief
+	@brief #### Draws a Grid when used with `draw_ft`.
+	@brief Math function that draws a "V" shape, that when used several times
+		whith `draw_ft` it draws the grid.
 	@note//_PARAMETERS
-	@param
+	@param x The x value of the function used to get the y value on the graph.
 	@note//_NOTES
-	@note
+	@note After each call from `draw_ft` the 'V' shape is move diagonally 10
+		pixels to the right to print the next line of the grid.
 	@note//_RETURN_VALUE
-	@return
+	@return The y value for the given x value.
+ */
+float		draw_grid(float x, void *param);
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Draws a function in range of `x`.
+	@brief Plots the given function `ft` in the given `img` from `x[0]` to
+		`x[1]` with the given `color`.
+	@note//_PARAMETERS
+	@param img The image to draw the function on.
+	@param ft The function to draw.
+	@param x[2] The range of x to draw the function in.
+	@param color[2] The color of the function.
+	@note//_NOTES
+	@note `color` just uses the first color, to future proof it in case I want
+		to add a gradient.
+ */
+void		draw_ft(mlx_image_t *img, float (ft)(float, void *), int x[2],
+				t_map *map);
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Frees a 2d array.
+	@brief Frees the given `array` of size `size`, and sets it to `NULL`.
+	@note//_PARAMETERS
+	@param array The array to free.
+	@param size The size of the array.
+	@note//_NOTES
+	@note If `size` is -1 then it frees the array until it finds a `NULL`.
+	@note The `array` is a triple pointer, so it can be set to `NULL`.
+	@note It uses `ft_free_n_null` to free the array.
+		See `libft/h_files/libft_mem_allocation.h` for more information.
+	@see ft_free_n_null
+ */
+void		ft_free_2d_array(void ***array, int size);
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Reads the map file.
+	@brief Reads `filename` and formats it into the given struct `map` saving
+		all the relevant values to it.
+	@note//_PARAMETERS
+	@param map The struct to read the map into.
+	@param filename The file containing the map to read.
  */
 void		read_map(char *filename, t_map *map);
-
-/**
-	@note//_DESCRIPTION
-	@brief #### Draws the given Function.
-	@brief Draws the given `function` on the `image` from the coordinates
-		`xy[0]` to `xy[1]` with the given `color`. 
-	@note//_PARAMETERS
-	@param image The image to draw the function on.
-	@param function The function to draw.
-	@param xy The coordinates to draw the function from and to.
-	@param color The color of the function.
-	@note//_NOTES
-	@note The function must be a function that takes a float and returns a float
-	@note The coordinates must be in the format of `{{x1, y1}, {x2, y2}}`
-	@note The coordinates must be inside the image and the final coordinates
-		must be greater than the initial coordinates.
-	@note The final coordinates must be a point inside the given function, else
-		it won't draw the function.
- */
-void		draw_with_function(mlx_image_t *image, float (function)(float),
-				int xy[2][2], int color);
 
 /**
 	@note//_DESCRIPTION
@@ -170,7 +213,8 @@ int			is_coord_valid(int *xy, mlx_image_t *image);
 	@note If any of the coordinates are outside of the image, then it does 
 		nothing.
  */
-void		draw_line(mlx_image_t *image, int xy_1[2], int xy_2[2], int color);
+void		draw_line(mlx_image_t *image, int xy_1[2], int xy_2[2],
+			int color[2]);
 
 /**
 	@note//_DESCRIPTION

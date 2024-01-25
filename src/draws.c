@@ -6,35 +6,40 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 21:32:27 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/13 13:03:41 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/25 17:50:58 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	draw_straight(mlx_image_t *image, int *origin, int *final, int color)
+void	put_pixel(mlx_image_t *image, int x, int y, int color)
 {
-	int	i;
+	if (is_coord_valid((int []){x, y}, image))
+		mlx_put_pixel(image, x, y, color);
+}
 
+void	draw_straight(mlx_image_t *image, int *start, int *final, int color[2])
+{
+	int		i;
+	float	delta_c;
+
+	delta_c = 0;
 	i = -1;
-	if (origin[0] == final[0])
+	if (start[0] != final[0] && start[1] != final[1])
+		return ;
+	if (start[1] > final[1] || start[0] > final[0])
+		return (draw_straight(image, final, start, color));
+	if (start[0] == final[0])
 	{
-		if (origin[1] > final[1])
-			draw_straight(image, final, origin, color);
-		else
-			while (++i + origin[1] != final[1])
-				mlx_put_pixel(image, origin[0], origin[1] + i, color);
+		delta_c = (float)(color[1] - color[0]) / abs(final[1] - start[1]);
+		while (++i + start[1] != final[1])
+			put_pixel(image, start[0], start[1] + i, color[0] + (delta_c * i));
 		return ;
 	}
-	else if (origin[1] == final[1])
-	{
-		if (origin[0] > final[0])
-			draw_straight(image, final, origin, color);
-		else
-			while (++i + origin[0] != final[0])
-				mlx_put_pixel(image, origin[0] + i, origin[1], color);
-		return ;
-	}
+	if (start[0] != final[0])
+		delta_c = (float)(color[1] - color[0]) / abs(final[0] - start[0]);
+	while (++i + start[0] != final[0])
+		put_pixel(image, start[0] + i, start[1], color[0] + (delta_c * i));
 }
 
 int	is_coord_valid(int *xy, mlx_image_t *image)
@@ -49,76 +54,54 @@ int	is_coord_valid(int *xy, mlx_image_t *image)
 	return (1);
 }
 
-void	draw_line(mlx_image_t *image, int xy_1[2], int xy_2[2], int color)
+void	draw_line(mlx_image_t *image, int start[2], int end[2], int color[2])
 {
 	float	slope;
-	float	x;
 	float	y;
 	int		move_y;
+	float	delta_c;
 
-	x = xy_1[0] + 1;
-	y = xy_1[1];
+
+	if (start[1] > end[1])
+		draw_line(image, end, start, color);
+	y = start[1];
 	slope = 0;
-	if (!(is_coord_valid(xy_1, image) || is_coord_valid(xy_2, image)))
-		return ;
-	if (xy_1[0] != xy_2[0])
-		slope = (float)(xy_2[1] - xy_1[1]) / abs(xy_2[0] - xy_1[0]);
-	while (y < xy_2[1] && --x >= 0)
+	delta_c = 0;
+	if (start[0] != end[0])
+		delta_c = (float)((color[1] - color[0]) / (end[0] - start[0]));
+	if (start[0] != end[0])
+		slope = (float)(end[1] - start[1]) / abs(end[0] - start[0]);
+	while (y < end[1] && --*start >= 0 && *start < end[0])
 	{
-		move_y = y;
-		while (move_y < y + slope && is_coord_valid((int []){x, move_y}, image))
-			mlx_put_pixel(image, x, move_y++, color);
-		if ((xy_2[0] - xy_1[0]) > 0)
-			x += 2;
+		move_y = -1;
+		while (++move_y < slope)
+			put_pixel(image, *start, y + move_y, color[0] + (delta_c * move_y));
+		if ((end[0] - start[0]) > 0)
+			*start += 2;
 		y += slope;
 	}
-	draw_straight(image, xy_1, xy_2, color);
-	if (xy_2[1] - xy_1[1] < 0)
-		draw_line(image, xy_2, xy_1, color);
+	draw_straight(image, start, end, color);
 }
 
-mlx_image_t	*draw_axis(t_map *map)
+void	draw_ft(mlx_image_t *img, float (ft)(float, void *), int x[2],
+	t_map *map)
 {
-	mlx_image_t	*line;
-
-	line = mlx_new_image(map->fdf, WIDTH, HEIGHT);
-	exit_on_error(CHECK_NULL, line, NULL, map);
-	exit_on_error(mlx_image_to_window(map->fdf, line, (WIDTH - line->width) / 2,
-			(HEIGHT - line->height) / 2), NULL, NULL, map);
-	draw_line(line, (int []){line->width / 2, line->height - 1},
-		(int []){0, line->width * tan(60)}, 16711935);
-	draw_line(line, (int []){line->width / 2, line->height - 1},
-		(int []){line->width - 1, line->width * tan(60)}, 16711935);
-	draw_line(line, (int []){line->width / 2, line->height - 1},
-		(int []){line->width / 2, 0}, 16711935);
-	return (line);
-}
-
-void	draw_with_function(mlx_image_t *img, float (function)(float),
-	int xy[2][2], int color)
-{
-	const int	x = 0;
-	const int	y = 1;
 	const int	start = 0;
 	const int	final = 1;
+	int			y[2];
+	const int	color = 0x00FFFFFF;
 
-	if (((int) ceil(function(xy[final][x])) != xy[final][y]
-		&& (int)function(xy[final][x]) != xy[final][y])
-		|| !is_coord_valid(xy[start], img) || !is_coord_valid(xy[final], img))
-		return ;
-	while (xy[start][x] != xy[final][x] && xy[start][x] <= xy[final][x])
+	while (x[start] < x[final])
 	{
-		if (is_coord_valid((int []){xy[start][x], function(xy[start][x])},
-			img))
+		y[0] = ft(x[0], map->param);
+		y[1] = ft(x[0] + 1, map->param);
+		if (is_coord_valid((int []){x[0], y[0]}, img))
 		{
-			mlx_put_pixel(img, xy[start][x], function(xy[start][x]),
-				color);
-			if (is_coord_valid((int []){xy[start][x] + 1,
-				function(xy[start][x] + 1)}, img))
-				draw_line(img, (int []){xy[start][x],
-					(int) function(xy[start][x])}, (int []){xy[start][x] + 1,
-					(int) function(xy[start][x] + 1)}, color);
+			if (is_coord_valid((int []){x[0] + 1, y[1]}, img))
+				draw_line(img, (int []){x[0], y[0]},
+					(int []){x[0] + 1, y[1]},
+					(int [2]){color, color});
 		}
-		xy[start][x]++;
+		x[0]++;
 	}
 }

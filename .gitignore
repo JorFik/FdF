@@ -2,3 +2,4 @@ debugger/
 en.subject.pdf
 .normignore
 /src/sprite.c
+src/test.c
