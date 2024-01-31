@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 16:19:56 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/24 15:22:12 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/30 18:36:38 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	get_color(char *str)
 	int			j;
 	int			color;
 	const int	jump_comma_and_0x = 3;
-	const int	default_color = 0x00FF00FF;
+	const int	default_color = 0x00FFFFFF;
 
 	i = 0;
 	j = 0;
@@ -38,7 +38,7 @@ int	get_color(char *str)
 			color += j;
 		i++;
 	}
-	return (color);
+	return (color | 0xFF);
 }
 
 void	measure_map(t_map	*map, char *filename)

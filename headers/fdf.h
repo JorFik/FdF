@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:51:44 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/25 17:03:56 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/31 21:18:49 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,131 +20,106 @@
 # include <string.h> // for strerror
 # include "libft.h"
 # include "MLX42.h"
+# include "fdf_colors.h" // for the color related functions
+# include "fdf_draws.h" // for the draw related functions
 
 //_--------------------------------------------------------------------------_//
 
-// ** ------------------------------ MACROS ------------------------------ ** //
+// ** ------------------------- MACROS AND ENUMS ------------------------- ** //
 
 # ifndef CHECK_NULL
 #  define CHECK_NULL -5102
 # endif
 
 # ifndef WIDTH
-#  define WIDTH 1280
+#  define WIDTH 3200
 # endif
 
 # ifndef HEIGHT
-#  define HEIGHT 720
+#  define HEIGHT 1600
 # endif
 
-//_--------------------------------------------------------------------------_//
-
-// ** ------------------------- DATA STRUCTURES -------------------------- ** //
-
-/**
-	@note//_DESCRIPTION
-	@brief #### The map struct.
-	@brief The map struct contains the width and height of the map, and the
-		map itself with the colors of the map.
-	@note//_PARAMETERS
-	@param width The width of the map.
-	@param height The height of the map.
-	@param z_value The Z value of every point in the map as a `int **`.
-	@param colors The color of every point in the map as a `int **`.
-	@param fdf The `mlx` window, used just in case of an error, to terminate
-		the window.
-	@param grid The image containing the grid.
-	@param drawn_map The image containing the drawn map.
-	@note//_NOTES
-	@note  `z_value[y][x]` and `colors[y][x]` correspond to the same point.
-	@note//_WARNING
-	@warning `z_value` and `colors` are allocated, make sure to free them.
- */
-typedef struct s_map
+enum
 {
-	uint32_t	width;
-	uint32_t	height;
-	void		*param;
-	int			**z_value;
-	int			**colors;
-	mlx_t		*fdf;
-	mlx_image_t	*grid;
-	mlx_image_t	*drawn_map;
-}	t_map;
+	R,
+	G,
+	B,
+	A
+};
+
+enum
+{
+	H,
+	W
+};
 
 //_--------------------------------------------------------------------------_//
 
 // ** ---------------------------- FUNCTIONS ---------------------------- ** //
-void		put_pixel(mlx_image_t *image, int x, int y, int color);
-void		draw_straight(mlx_image_t *image, int *origin, int *final,
-				int color[2]);
-void		put_line(mlx_image_t *image, int start[2], int end[2],
-				int color[2]);
-void		plot_map(t_map *map);
 
 /**
 	@note//_DESCRIPTION
-	@brief ####
-	@brief
-	@note//_PARAMETERS
-	@param
+	@brief #### Initializes the map struct.
+	@brief Initializes the map struct and initializes the `mlx` window.
 	@note//_NOTES
-	@note
+	@note It sets the `param` to 2, the `scale` to 2, the `size[H]` to `HEIGHT`,
+		and the `size[W]` to `WIDTH`, the rest of the values are set to 0 or
+		`NULL`.
+	@note `map->fdf` is set to the `mlx_t struct` returned by `mlx_init`.
 	@note//_RETURN_VALUE
-	@return
+	@return The initialized map struct.
+	@note//_WARNING
+	@warning The returned value is allocated, make sure to free it.
  */
+t_map		*map_initializer(void);
 
 /**
 	@note//_DESCRIPTION
-	@brief #### Handles the key press to alterate the grid.
-	@brief Key hook function that enables the user to toggle the grid, and 
-		change inclination of the grid.
+	@brief #### Loop hook function to exit.
+	@brief Loop hook function that enables the user to exit the program by
+		pressing the `ESC` key.
+	@note//_PARAMETERS
+	@param param The `mlx_t struct` containing the `fdf` window.
+	@note//_NOTES
+	@note `ESC` to exit the program.
+ */
+void		key_press(void *param);
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Prints the map data.
+	@brief Prints the data from `map->z_value` and `map->colors` to stdout.
+	@note//_PARAMETERS
+	@param map The map struct containing the data to print.
+	@note//_NOTES
+	@note This function is just a debug function, and is not used in the final
+		project.
+ */
+void		print_map(t_map *map);
+
+/**
+	@note//_DESCRIPTION
+	@brief #### Handles the key presses.
+	@brief Key hook function that enables the user to zoom in and out, move the
+		map, change to parallel view, refresh the map, and rotate the map.
 	@note//_PARAMETERS
 	@param keydata The key data containing the key and the action used by the
 		mlx library.
 	@param param The `t_map struct` containing all the relevant info to handle
-		the grid.
+		the input.
 	@note//_NOTES
-	@note The grid is enabled by default.
-	@note The grid is toggle by pressing the 'P' key.
-	@note The grid inclination is increased by pressing the 'Z' key.
-	@note The grid inclination is decreased by pressing the 'X' key.
-	@note//_RETURN_VALUE
-	@return
+	@note `R` to reset the map.
+	@note `P` to change between parallel and isometric view.
+	@note `W` to move up.
+	@note `S` to move down.
+	@note `A` to move left.
+	@note `D` to move right.
+	@note `UP` to zoom in.
+	@note `DOWN` to zoom out.
+	@note `LEFT` to rotate backwards.
+	@note `RIGHT` to rotate forwards.
  */
 void		handle_grid(mlx_key_data_t keydata, void *param);
-
-/**
-	@note//_DESCRIPTION
-	@brief #### Draws a Grid when used with `draw_ft`.
-	@brief Math function that draws a "V" shape, that when used several times
-		whith `draw_ft` it draws the grid.
-	@note//_PARAMETERS
-	@param x The x value of the function used to get the y value on the graph.
-	@note//_NOTES
-	@note After each call from `draw_ft` the 'V' shape is move diagonally 10
-		pixels to the right to print the next line of the grid.
-	@note//_RETURN_VALUE
-	@return The y value for the given x value.
- */
-float		draw_grid(float x, void *param);
-
-/**
-	@note//_DESCRIPTION
-	@brief #### Draws a function in range of `x`.
-	@brief Plots the given function `ft` in the given `img` from `x[0]` to
-		`x[1]` with the given `color`.
-	@note//_PARAMETERS
-	@param img The image to draw the function on.
-	@param ft The function to draw.
-	@param x[2] The range of x to draw the function in.
-	@param color[2] The color of the function.
-	@note//_NOTES
-	@note `color` just uses the first color, to future proof it in case I want
-		to add a gradient.
- */
-void		draw_ft(mlx_image_t *img, float (ft)(float, void *), int x[2],
-				t_map *map);
 
 /**
 	@note//_DESCRIPTION
@@ -175,19 +150,6 @@ void		read_map(char *filename, t_map *map);
 
 /**
 	@note//_DESCRIPTION
-	@brief #### Draws x, y, and z axis.
-	@brief Draws the x, y, and z axis on the given `fdf` window.
-	@note//_PARAMETERS
-	@param map The map struct containing the `fdf` window.
-	@note//_NOTES
-	@note Function is just reference for the maps.
-	@note//_RETURN_VALUE
-	@return The image of the axis.
- */
-mlx_image_t	*draw_axis(t_map *map);
-
-/**
-	@note//_DESCRIPTION
 	@brief #### Checks if the (x, y) is valid.
 	@brief Checks if the given `xy` coordinates are inside the given `image`.
 	@note//_PARAMETERS
@@ -197,82 +159,7 @@ mlx_image_t	*draw_axis(t_map *map);
 	@return `0` if the coordinates are outside of the image, `1` if they are
 		inside.
  */
-int			is_coord_valid(int *xy, mlx_image_t *image);
-
-/**
-	@note//_DESCRIPTION
-	@brief #### Draws a line in the given `image`
-	@brief Draws a line from coordinates `xy_1` to coordinates `xy_2` with the 
-		given `color` on the given `image`.
-	@note//_PARAMETERS
-	@param image The image to draw the line on.
-	@param xy_1 The coordinates of the first point.
-	@param xy_2 The coordinates of the second point.
-	@param color The color of the line.
-	@note//_NOTES
-	@note If any of the coordinates are outside of the image, then it does 
-		nothing.
- */
-void		draw_line(mlx_image_t *image, int xy_1[2], int xy_2[2],
-			int color[2]);
-
-/**
-	@note//_DESCRIPTION
-	@brief #### Decodes from `rgba` the red value.
-	@brief Takes the `rgba` value and takes the `red` value from it.
-	@note//_PARAMETERS
-	@param rgba The rgba value.
-	@note//_RETURN_VALUE
-	@return The red value.
- */
-int			get_r(int rgba);
-
-/**
-	@note//_DESCRIPTION
-	@brief #### Decodes from `rgba` the green value.
-	@brief Takes the `rgba` value and takes the `green` value from it.
-	@note//_PARAMETERS
-	@param rgba The rgba value.
-	@note//_RETURN_VALUE
-	@return The green value.
- */
-int			get_g(int rgba);
-
-/**
-	@note//_DESCRIPTION
-	@brief #### Decodes from `rgba` the blue value.
-	@brief Takes the `rgba` value and takes the `blue` value from it.
-	@note//_PARAMETERS
-	@param rgba The rgba value.
-	@note//_RETURN_VALUE
-	@return The blue value.
- */
-int			get_b(int rgba);
-
-/**
-	@note//_DESCRIPTION
-	@brief #### Decodes from `rgba` the alpha value.
-	@brief Takes the `rgba` value and takes the `alpha` value from it.
-	@note//_PARAMETERS
-	@param rgba The rgba value.
-	@note//_RETURN_VALUE
-	@return The alpha value.
- */
-int			get_a(int rgba);
-
-/**
-	@note//_DESCRIPTION
-	@brief #### Returns the rgba value of the given r, g, b, and a values.
-	@brief Encodes the r, g, b, and a values into a single int.
-	@note//_PARAMETERS
-	@param r The red value.
-	@param g The green value.
-	@param b The blue value.
-	@param a The alpha value.
-	@note//_RETURN_VALUE
-	@return Encoded rgba value.
- */
-int			get_rgba(int r, int g, int b, int a);
+int			is_coord_valid(int *xy, const mlx_image_t *image);
 
 /**
 	@note//_DESCRIPTION

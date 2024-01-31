@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:23:47 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/25 17:18:53 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/31 17:01:27 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,11 @@ void	print_map(t_map *map)
 
 float	draw_grid(float x, void *param)
 {
-	int			*aperture;
+	const int	aperture = (int)param;
 	static int	move = -640;
 	static int	flag = 0;
 	const int	middle = WIDTH / 2;
 
-	aperture = (int *)param;
 	if (move == 650)
 		move = -640;
 	if (x != 0 && !flag)
@@ -44,33 +43,8 @@ float	draw_grid(float x, void *param)
 		move += 10;
 		flag = 0;
 	}
-	return (-((fabs(x - middle - move) / *aperture)
-			+ fabs((float) move / *aperture)) + HEIGHT);
-}
-
-void	handle_grid(mlx_key_data_t keydata, void *param)
-{
-	t_map		*map;
-	int			*aperture;
-
-	map = (t_map *)param;
-	aperture = (int *)map->param;
-	ft_printf("aperture: %d\n", *aperture);
-	if (keydata.key == MLX_KEY_P && keydata.action == MLX_PRESS)
-		map->grid->enabled = !map->grid->enabled;
-	if (keydata.key == MLX_KEY_Z && keydata.action == MLX_PRESS)
-	{
-		*aperture += 1;
-		mlx_delete_image(map->fdf, map->grid);
-		map->grid = draw_axis(map);
-	}
-	if (keydata.key == MLX_KEY_X && keydata.action == MLX_PRESS)
-	{
-		if (*aperture > 1)
-			*aperture -= 1;
-		mlx_delete_image(map->fdf, map->grid);
-		map->grid = draw_axis(map);
-	}
+	return (-((fabs(x - middle - move) / aperture)
+			+ fabs((float) move / aperture)) + HEIGHT);
 }
 
 mlx_image_t	*draw_axis(t_map *map)
@@ -86,9 +60,21 @@ mlx_image_t	*draw_axis(t_map *map)
 	while (x <= line->width)
 	{
 		draw_ft(line, draw_grid, (int [2]){0, WIDTH}, map);
-		x += 2;
+		x += 10;
 	}
 	draw_line(line, (int []){line->width / 2, line->height - 1},
-		(int []){line->width / 2, 0}, (int [2]) {0x00FFFFFF, 0xFF0000FF});
+		(int []){line->width / 2, 0}, (int [2]){0x0000FF88, 0xFF000088});
 	return (line);
+}
+
+int	is_coord_valid(int *xy, const mlx_image_t *image)
+{
+	uint32_t	x;
+	uint32_t	y;
+
+	x = *xy;
+	y = xy[1];
+	if (x < 0 || x >= image->width || y < 0 || y >= image->height)
+		return (0);
+	return (1);
 }

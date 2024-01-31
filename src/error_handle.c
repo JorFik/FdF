@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 18:27:34 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/23 19:23:11 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/01/31 20:21:09 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ void	exit_on_error(int status, void *check_4_null, char *error_message,
 			ft_free_2d_array((void ***)&map->colors, map->height);
 		if (map)
 			ft_free_n_null((void **)&map);
-		if (!access("fdf", X_OK))
-			system("leaks fdf");
 		exit(mlx_errno);
 	}
 }

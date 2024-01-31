@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/25 14:13:21 by JFikents         ###   ########.fr        #
+#    Updated: 2024/01/31 20:54:16 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ OBJ+ = $(addprefix $(SRC_DIR), $(BONUS_FILES:.c=.o))
 SRC = $(addprefix $(SRC_DIR), $(C_FILES))
 CFLAGS = -Wall -Wextra -Werror -Wunreachable-code
 INCLUDES = $(addprefix -I, $(HEADERS_DIR))
-DEBUG_FLAGS = -fsanitize=address -g
+DEBUG_FLAGS = -fsanitize=address -g3
 LDFLAGS = $(patsubst %, -L%/, $(LIBRARIES_DIR))\
 $(patsubst lib%,-l%,$(LIBRARIES_DIR))
 default_target: all
@@ -49,7 +49,10 @@ NAME = fdf
 
 # If you need to add more flags to the compilation, add them here in CFLAGS
 # -Wall -Wextra -Werror -Wunreachable-code are already added
-# CFLAGS += -Ofast
+CFLAGS = 
+
+#_ If you don't want optimization set the value of the variable OPTIMIZATION
+#_ located in DEBUG AREA to 0
 
 # If you need to add libraries, add them to the variable LIBRARIES_DIR
 #_ Don't add '/' at the end of the directory
@@ -76,7 +79,7 @@ SRC_DIR = src/
 #_ NOTE: to every file in C_FILES, the path in SRC_DIR will be added at the
 #_ beginning
 C_FILES = main.c error_handle.c rgba_utils.c draws.c read_map.c debug_utils.c\
-	draw_map.c test.c
+	draw_map.c rgba.c hook.c draw_parallel.c
 
 # Here you can add the files that you need to compile that are not inside the
 # SRC_DIR
@@ -88,6 +91,9 @@ MLX42_H = MLX42/ lodepng/ KHR/ glad/
 
 # * ----------------------------- DEBUG AREA ------------------------------ * #
 
+# Set OPTIMIZATION to 0 for a proper debug
+OPTIMIZATION = 1
+
 # To debug your program, just call the rule debug
 # It will compile your program with the flag -g and move the executable to the
 # folder DEBUGGER
@@ -95,27 +101,33 @@ DEBUGGER = debugger/
 
 # If you want to test your program, but just some files, add them to the
 # variable TEST and use the rule test
-TEST = src/read_map.c src/error_handle.c
+TEST = src/draws.c src/main.c src/rgba.c src/rgba_utils.c src/debug_utils.c\
+	src/error_handle.c src/draw_map.c
 
 # If you want to add more flags to the debug rule, add them to the variable
 # DEBUG_FLAGS
-# -g and -fsanitize=address are already added
+# -g3 and -fsanitize=address are already added
 DEBUG_FLAGS += 
 
 c:
 	@$(RM) $(DEBUGGER)* 
-	@$(RM) *.out *.dSYM *.gch 
+	@$(RM) *.out *.dSYM *.gch test
 
 debug: c a_files
 	@$(CC) $(CFLAGS) $(SRC) $(DEBUG_FLAGS) $(INCLUDES) $(LDFLAGS)
 	@mv a.out.dSYM $(DEBUGGER)
 	@mv a.out $(DEBUGGER)
-# @make fclean
 
 test: c a_files
 	@$(CC) $(CFLAGS) $(TEST) $(DEBUG_FLAGS) $(INCLUDES) $(LDFLAGS)
 	@mv a.out $(DEBUGGER)
 	@mv a.out.dSYM $(DEBUGGER)
+
+trun : a_files
+	@$(CC) -o test $(CFLAGS) $(TEST) $(INCLUDES) $(LDFLAGS)
+	@echo "	arg?"
+	@read arg; \
+		./test $$arg
 
 #_----------------------------------------------------------------------------_#
 
@@ -151,6 +163,10 @@ git : fclean
 # * ----------------------------- BASIC RULES ----------------------------- * #
 
 .PHONY: clean fclean re all c bonus debug test a_files submodule aclean 
+
+ifeq ($(OPTIMIZATION), 1)
+CFLAGS += -Ofast -O3
+endif
 
 ifeq ($(BONUS), 1)
 ifeq ($(COMPILE_TOGETHER), 1)
