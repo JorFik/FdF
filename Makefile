@@ -6,7 +6,7 @@
 #    By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 21:57:25 by JFikents          #+#    #+#              #
-#    Updated: 2024/01/31 20:54:16 by JFikents         ###   ########.fr        #
+#    Updated: 2024/02/01 13:42:19 by JFikents         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -135,7 +135,7 @@ trun : a_files
 
 # Here you can add extra rules to compile your program
 
-libmlx42/:
+libmlx42:
 	@echo "	Creating libmlx42..."
 	@cmake $(MLX42) -B libmlx42 && cmake --build libmlx42 --parallel -j4
 
