@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/01 21:18:05 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/31 20:45:01 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/03/19 10:52:22 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ mlx_image_t	*set_background(t_map *map)
 	{
 		x = 0;
 		while (x < WIDTH)
-			mlx_put_pixel(background, x++, y, 0x88880044);
+			mlx_put_pixel(background, x++, y, BACKGROUND_COLOR);
 		y ++;
 	}
 	return (background);
@@ -64,9 +64,9 @@ int	main(int argc, char **argv)
 	if (argc != 2)
 		return (ft_printf("Usage: ./fdf <filename>.fdf\n"), 1);
 	map = map_initializer();
+	background = set_background(map);
 	read_map(argv[1], map);
 	plot_map(map);
-	background = set_background(map);
 	mlx_loop_hook(map->fdf, key_press, (void *)map->fdf);
 	mlx_key_hook(map->fdf, handle_grid, (void *)map);
 	mlx_loop(map->fdf);
