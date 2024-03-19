@@ -3,3 +3,7 @@ en.subject.pdf
 .normignore
 /src/sprite.c
 src/test.c
+*/*.o
+fdf
+libmlx42/
+.DS_Store
