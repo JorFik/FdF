@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 19:39:13 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/31 19:57:43 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/03/19 10:57:53 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,13 @@ void	key_press(void *param)
 
 void	handle_move(mlx_key_data_t keydata, t_map *map)
 {
-	if (keydata.key == MLX_KEY_W && keydata.action == MLX_PRESS)
+	if (mlx_is_key_down(map->fdf, MLX_KEY_W))
 		map->drawn_map->instances->y -= 10;
-	if (keydata.key == MLX_KEY_S && keydata.action == MLX_PRESS)
+	if (mlx_is_key_down(map->fdf, MLX_KEY_S))
 		map->drawn_map->instances->y += 10;
-	if (keydata.key == MLX_KEY_A && keydata.action == MLX_PRESS)
+	if (mlx_is_key_down(map->fdf, MLX_KEY_A))
 		map->drawn_map->instances->x -= 10;
-	if (keydata.key == MLX_KEY_D && keydata.action == MLX_PRESS)
+	if (mlx_is_key_down(map->fdf, MLX_KEY_D))
 		map->drawn_map->instances->x += 10;
 }
 
