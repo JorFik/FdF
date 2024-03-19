@@ -6,7 +6,7 @@
 /*   By: JFikents <JFikents@student.42Heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 18:51:44 by JFikents          #+#    #+#             */
-/*   Updated: 2024/01/31 21:18:49 by JFikents         ###   ########.fr       */
+/*   Updated: 2024/03/19 10:50:05 by JFikents         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,10 @@
 
 # ifndef HEIGHT
 #  define HEIGHT 1600
+# endif
+
+# ifndef BACKGROUND_COLOR
+#  define BACKGROUND_COLOR 0x000000ff
 # endif
 
 enum
